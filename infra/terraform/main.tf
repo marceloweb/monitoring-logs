@@ -1,8 +1,6 @@
 provider "azurerm" {
   features {}
 
-  # **WARNING: HARDCODED CREDENTIALS - DO NOT USE IN PRODUCTION!**
-  # Consider using Azure CLI authentication or environment variables for security.
   subscription_id = ""
   client_id       = ""
   client_secret   = ""
@@ -11,7 +9,7 @@ provider "azurerm" {
 
 resource "azurerm_resource_group" "rg" {
   name     = "rg-free-test"
-  location = "East US" # Região com mais benefícios free
+  location = "East US"
 }
 
 resource "azurerm_linux_virtual_machine" "vm" {
@@ -55,7 +53,7 @@ resource "azurerm_subnet" "subnet" {
   address_prefixes     = ["10.0.1.0/24"]
 }
 
-# --- NEW NSG RESOURCES START HERE ---
+# NSG RESOURCES
 
 resource "azurerm_network_security_group" "nsg" {
   name                = "nsg-ssh-free"
@@ -81,7 +79,7 @@ resource "azurerm_network_security_group" "nsg" {
     access                     = "Allow"
     protocol                   = "Tcp"
     source_port_range          = "*"
-    destination_port_range     = "3000" # Port for Grafana
+    destination_port_range     = "3000" 
     source_address_prefix      = "0.0.0.0/0"
   }
 }
@@ -141,8 +139,8 @@ resource "null_resource" "docker_setup" {
       "sudo apt-get update",
       "sudo apt-get install -y docker.io docker-compose git",
       "sudo usermod -aG docker adminuser",
-      "mkdir -p ~/app/{loki,grafana} && sync", # <--- ADDED `&& sync` here
-      "sleep 5", # <--- OPTIONAL: Add a short delay if `sync` isn't enough
+      "mkdir -p ~/app/{loki,grafana} && sync", 
+      "sleep 5", 
     ]
   }
 }
